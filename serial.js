@@ -1,27 +1,25 @@
-//var MongoClient = require('mongodb').MongoClient;
-//var url = "mongodb://localhost:27017/test";
-var Serialport = require('serialport');
-var portName = 'COM15';
-//var d = new Date();
-//var timestamp=[],data=[];
-var sp = new Serialport(portName, {
-    baudRate: 9600,
-    dataBits: 8,
-    parity: 'none',
-    stopBits: 1,
-    flowControl: false
+var mysql = require('mysql');
+
+var dataset=[];                        //this array is what u asked for
+var con = mysql.createConnection({     //creating connection...
+  host: "localhost",
+  user: "root",
+  password: "",
+  database:"foo"
 });
-var fromserial
-//MongoClient.connect(url, function (err, db) {
-  //f (err) throw err;
-  sp.on('data', function(input) {
-    fromserial=parseInt(input,10);
-	//var time=Date.now();
-	//var myobj = { "_id":time,"data":fromserial};
-  if(fromserial!=NaN)
-  console.log(fromserial);
-	
- // db.collection("effluent").insertOne(myobj);
- 
- 
-});
+con.connect(function(err) 
+{
+	  //console.log("connected to db");
+  var sql = "select data from effluents"; //selecting data field from table
+  con.query(sql, function (err, result) 
+  {
+         if (err) throw err;
+         for(var res in result)                   //looping through result set and pushing data to array--dataset
+             {
+				 //console.log(result[res].data);  
+                 dataset.push(result[res].data);
+			 }
+         console.log(dataset);
+   });
+
+}); 
